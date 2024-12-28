@@ -133,6 +133,13 @@ if __name__ == "__main__":
     )
 
     classes = ["dad", "mom", "dexter", "deedee"]
+
+    for class_name in classes:
+        class_path = "../data/extracted_patches"
+        for file in os.listdir(class_path):
+            file_path = os.path.join(class_path, file)
+            os.remove(file_path)
+
     for class_name in classes:
         class_path = os.path.join("../data/train", class_name)
         class_images = os.listdir(class_path)
