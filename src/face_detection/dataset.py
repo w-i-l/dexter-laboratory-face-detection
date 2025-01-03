@@ -4,6 +4,7 @@ from utils.image_processing import ImageProcessing
 from utils.helper_functions import format_path
 import os
 from tqdm import tqdm
+import numpy as np
 
 class DataSet:
     def __init__(self, faces_path: str, non_faces_path: str):
@@ -32,7 +33,7 @@ class DataSet:
         return data, labels
     
 
-    def read_faces(self) -> tuple[List, List]:
+    def read_faces(self, size: int = None) -> tuple[List, List]:
         data, labels = [], []
 
         for class_name in self.classes:
@@ -52,6 +53,12 @@ class DataSet:
                 image = ImageProcessing.read_image(file_path)
                 data.append(image)
                 labels.append(1)
+
+        # random index
+        if size is not None:
+            random_index = np.random.permutation(len(data))
+            data = [data[i] for i in random_index[:size]]
+            labels = [labels[i] for i in random_index[:size]]
 
         return data, labels
     
