@@ -38,5 +38,4 @@ class ImageProcessing:
         width, height = ImageProcessing.IMAGE_WIDTH, ImageProcessing.IMAGE_HEIGHT
         image = cv2.resize(image, (height, width))  # cv2.resize takes (width, height)
         # image = np.expand_dims(image, axis=1)
-        print("image shape", image.shape)
         return image
