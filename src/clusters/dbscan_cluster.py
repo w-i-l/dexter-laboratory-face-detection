@@ -67,3 +67,10 @@ class DBSCANAnalysis(BaseClusterAnalysis):
         plt.show()
 
         self.print_cluster_statistics(self._clusters, None)
+
+
+    def get_cluster_centers(self):
+        if self.dbscan is None:
+            self.clusterize()
+        
+        return self.dbscan.components_
