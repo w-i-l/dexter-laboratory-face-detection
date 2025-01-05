@@ -128,8 +128,8 @@ if __name__ == "__main__":
     extractor = PatchesExtractor(
         "../data/train", 
         "../data/clusters/kmeans_clusters.csv",
-        patch_overlap_threshold=0.2, 
-        face_overlap_threshold=0
+        patch_overlap_threshold=0.4, 
+        face_overlap_threshold=0.45
     )
 
     classes = ["dad", "mom", "dexter", "deedee"]
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         for image_name in tqdm(class_images, desc=f"Extracting patches for {class_name}"):
             image_path = os.path.join(class_path, image_name)
 
-            patches = extractor.extract_patches_from_image(image_path, number_of_patches=10)
+            patches = extractor.extract_patches_from_image(image_path, number_of_patches=60)
             image = cv2.imread(image_path)
             faces = extractor.faces_in_image(image_path)
             for index, patch in enumerate(patches):
