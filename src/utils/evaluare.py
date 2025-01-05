@@ -169,7 +169,7 @@ def evaluate_results_task2(solution_path,ground_truth_path,character, verbose = 
 	eval_detections_character(detections, scores, file_names, ground_truth_path, character)
   
 verbose = 0
-class_name = "dad"
+class_name = "deedee"
 my_path = f"../data/predictions/{class_name}_predictions.txt"
 boxes = []
 scores = []
@@ -186,7 +186,7 @@ boxes = np.array(boxes)
 scores = np.array(scores)
 file_names = np.array(file_names)
 
-output_path = "../data/solutions/test/"
+output_path = f"../data/solutions/{class_name}/"
 if not os.path.exists(output_path):
     os.makedirs(output_path)
 
@@ -196,7 +196,7 @@ np.save(output_path + "file_names_all_faces.npy", file_names)
 
 #change this on your machine
 solution_path_root = output_path
-ground_truth_path_root = "../data/solutions/ground_truth/dad"
+ground_truth_path_root = f"../data/solutions/ground_truth/"
 
 gt_path = f"../data/train/{class_name}_annotations.txt"
 with open(gt_path, "r") as f:
@@ -205,7 +205,7 @@ with open(gt_path, "r") as f:
 
 print(f"Evaluating {len(file_names)} faces")
 
-gt_file_name = "dad_gt_validare.txt"
+gt_file_name = f"{class_name}_gt_validare.txt"
 with open(ground_truth_path_root + gt_file_name, "w") as f:
     for line in gt:
         image_name, x_min, y_min, x_max, y_max, _ = line.strip().split()
