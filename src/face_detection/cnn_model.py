@@ -15,7 +15,7 @@ class CNNModel:
         self.model.compile(
             optimizer=optimizer,
             loss='binary_crossentropy',
-            metrics=['mse']
+            metrics=['accuracy']
         )
         self.model.summary()
 
@@ -26,21 +26,28 @@ class CNNModel:
         
         x = tf.keras.layers.Rescaling(1./255)(inputs)
         
-        x = tf.keras.layers.Conv2D(64, (3, 3), kernel_initializer='he_normal', padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.Conv2D(32, 7, kernel_initializer='he_normal')(x)
+        x = tf.keras.layers.Conv2D(32, 7, kernel_initializer='he_normal')(x)
+        # x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.Activation('relu')(x)
         x = tf.keras.layers.MaxPooling2D((2, 2))(x)
         
-        x = tf.keras.layers.Conv2D(128, (3, 3), kernel_initializer='he_normal', padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.Conv2D(64, 7, kernel_initializer='he_normal')(x)
+        # x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.Activation('relu')(x)
         x = tf.keras.layers.MaxPooling2D((2, 2))(x)
         
-        x = tf.keras.layers.Conv2D(256, (3, 3), kernel_initializer='he_normal', padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.Conv2D(128, 5, kernel_initializer='he_normal')(x)
+        # x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.Activation('relu')(x)
+        x = tf.keras.layers.MaxPooling2D((2, 2))(x)
+        
+        x = tf.keras.layers.Conv2D(256, (3, 3), kernel_initializer='he_normal')(x)
+        # x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.Activation('relu')(x)
+        x = tf.keras.layers.Conv2D(256, (3, 3), kernel_initializer='he_normal')(x)
         x = tf.keras.layers.Conv2D(256, (3, 3), kernel_initializer='he_normal', padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
+        # x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.Activation('relu')(x)
         x = tf.keras.layers.MaxPooling2D((2, 2))(x)
         
@@ -71,14 +78,14 @@ class CNNModel:
         callbacks = [
             tf.keras.callbacks.EarlyStopping(
                 monitor='loss',
-                patience=6,
+                patience=15,
                 restore_best_weights=True
             ),
             tf.keras.callbacks.ReduceLROnPlateau(
                 monitor='loss',
-                factor=0.5,
+                factor=0.9,
                 patience=3,
-                min_lr=1e-6
+                min_lr=1e-9
             )
         ]
 
@@ -97,14 +104,14 @@ class CNNModel:
         callbacks = [
             tf.keras.callbacks.EarlyStopping(
                 monitor='loss',
-                patience=15,
+                patience=25,
                 restore_best_weights=True
             ),
             tf.keras.callbacks.ReduceLROnPlateau(
                 monitor='loss',
-                factor=0.7,
+                factor=0.85,
                 patience=3,
-                min_lr=1e-6
+                min_lr=1e-9
             )
         ]
 
@@ -113,7 +120,8 @@ class CNNModel:
             validation_data=val_generator,
             epochs=epochs,
             callbacks=callbacks,
-            verbose=1
+            verbose=1,
+            steps_per_epoch=30
         )
         return history
 
@@ -204,7 +212,7 @@ if __name__ == "__main__":
     )
 
     try:
-        history = model.train_with_generator(train_generator, val_generator, epochs=50)
+        history = model.train_with_generator(train_generator, val_generator, epochs=500)
     except KeyboardInterrupt:
         print("Training interrupted")
     
