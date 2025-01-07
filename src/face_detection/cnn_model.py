@@ -138,7 +138,7 @@ class CNNModel:
         image = ImageProcessing.resize_image(image)
         image = np.expand_dims(image, axis=0)  # Add batch dimension  
         prediction = self.model.predict(image, verbose=0)
-        return round(prediction[0][0], 2)
+        return prediction[0][0]
     
 
     def predict_batch(self, images: np.ndarray) -> np.ndarray:
@@ -170,10 +170,10 @@ class CNNModel:
         
         # Return scalar for single image
         if batch_size == 1:
-            return round(float(predictions[0][0]), 2)
+            return float(predictions[0][0])
         
         # Return array for batch
-        return np.array([round(float(p[0]), 2) for p in predictions])
+        return np.array([float(p[0]) for p in predictions])
 
 
 if __name__ == "__main__":
