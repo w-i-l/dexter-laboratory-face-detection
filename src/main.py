@@ -39,29 +39,8 @@ class FacesAnnotations:
         return self._annotations[image_path] if image_path in self._annotations else []
     
 
-if __name__ == "__main__":
-    # Load the model
-    start_time = time.time()
-    model = CNNModel((ImageProcessing.IMAGE_WIDTH, ImageProcessing.IMAGE_HEIGHT, 3))
-    model.load_model("../models/face_detector.h5")
-    print(f"Model loaded in {time.time() - start_time:.2f} seconds")
 
-    # Load the clusters
-    clusters_path = "../data/clusters/kmeans_clusters.csv"
-    clusters = []
-    with open(clusters_path, 'r') as file:
-        reader = csv.reader(file)
-        next(reader)  # Skip header
-        for row in reader:
-            x, y = row
-            clusters.append((float(x), float(y)))
-    print(f"\n Loaded {len(clusters)} clusters\n")
-
-    image_slider = ImageSlider(clusters_path)
-
-    class_name = "mom"
-    dateset_type = "train"
-
+def process_class(class_name: str, dateset_type: str):
     images_path = f"../data/{dateset_type}/{class_name}"
     annotations_path = f"../data/{dateset_type}/{class_name}_annotations.txt"
     faces_annotations = FacesAnnotations(images_path, annotations_path)
@@ -77,7 +56,9 @@ if __name__ == "__main__":
 
     for image_name in tqdm(range(1, 1001)):
         image_name = str(image_name)
-        image_name = image_name.zfill(4) # 0 padding up to 4 digits
+
+        zfill = 4 if dateset_type == "train" else 3
+        image_name = image_name.zfill(zfill) # 0 padding up to 4 digits
 
         original_width = 480
         original_height = 360
@@ -100,16 +81,22 @@ if __name__ == "__main__":
         )
 
         # # Draw all detected faces
-        # for face in faces:
-        #     x, y, x2, y2 = face[0]
-        #     cv2.rectangle(image, (x, y), (x2, y2), (0, 255, 0), 1)
+        for face in faces:
+            x, y, x2, y2 = face[0]
+            center_x = (x + x2) // 2
+            center_y = (y + y2) // 2
+            cv2.circle(image, (center_x, center_y), 2, (0, 255, 0), 2)
+            # cv2.rectangle(image, (x, y), (x2, y2), (0, 255, 0), 1)
 
         scores = [face[1] for face in faces]
         faces = [face[0] for face in faces]
         aggregated_faces = ClusterAggregator.get_face_boxes(faces, scores, iou_threshold=0.18)
         # aggregated_faces = NMSAggregator.get_face_boxes(faces, scores, iou_threshold=0.08) 
-
         # Draw aggregated faces
+
+        scores = [face[-1] for face in aggregated_faces]
+        aggregated_faces = [face[:-1] for face in aggregated_faces]
+
         for face,score in zip(aggregated_faces, scores):
             cv2.rectangle(image, (face[0], face[1]), (face[2], face[3]), (255, 255, 0), 2)
             prediction_file.write(f"{image_name}.jpg {face[0]} {face[1]} {face[2]} {face[3]} {score}\n")
@@ -125,3 +112,33 @@ if __name__ == "__main__":
         cv2.imwrite(save_path, image)
 
     prediction_file.close()
+
+if __name__ == "__main__":
+    # Load the model
+    start_time = time.time()
+    model = CNNModel((ImageProcessing.IMAGE_WIDTH, ImageProcessing.IMAGE_HEIGHT, 3))
+    model.load_model("../models/face_detector.h5")
+    print(f"Model loaded in {time.time() - start_time:.2f} seconds")
+
+    # Load the clusters
+    clusters_path = "../data/clusters/good_kmeans_clusters.csv"
+    clusters = []
+    with open(clusters_path, 'r') as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip header
+        for row in reader:
+            x, y = row
+            clusters.append((float(x), float(y)))
+    print(f"\n Loaded {len(clusters)} clusters\n")
+
+    image_slider = ImageSlider(clusters_path)
+
+    class_name = "dexter"
+    dateset_type = "train"
+
+    # process_class(class_name, dateset_type)
+    
+    for class_name in tqdm(["mom", "deedee"], desc=f"Processing class {class_name}"):
+        process_class(class_name, dateset_type)
+
+    

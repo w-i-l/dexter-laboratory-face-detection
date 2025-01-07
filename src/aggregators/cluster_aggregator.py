@@ -75,6 +75,8 @@ class ClusterAggregator:
 
         if sum(scores) == 0:
             return 0, 0, 0, 0
+        
+        score = sum(scores) / len(scores)
 
         # ponderate average
         x1 = sum(box[0] * scores[i] for i, box in enumerate(cluster_boxes)) / sum(scores)
@@ -82,4 +84,4 @@ class ClusterAggregator:
         x2 = sum(box[2] * scores[i] for i, box in enumerate(cluster_boxes)) / sum(scores)
         y2 = sum(box[3] * scores[i] for i, box in enumerate(cluster_boxes)) / sum(scores)
 
-        return int(x1), int(y1), int(x2), int(y2)
+        return int(x1), int(y1), int(x2), int(y2), score
