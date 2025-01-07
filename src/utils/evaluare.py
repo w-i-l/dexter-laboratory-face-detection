@@ -85,6 +85,12 @@ def eval_detections(detections, scores, file_names, ground_truth_path):
     plt.savefig('precizie_medie_all_faces.png')
     plt.show()
 
+    print("Task 1: Average precision: ", average_precision)
+    task1_score = 4 * average_precision / 0.8
+    task1_score = min(4, task1_score)
+    task1_score = round(task1_score, 2)
+    print(f" Task 1 score: {task1_score}")
+
 def eval_detections_character(detections, scores, file_names,ground_truth_path,character):
     ground_truth_file = np.loadtxt(ground_truth_path, dtype='str')
     ground_truth_file_names = np.array(ground_truth_file[:, 0])
@@ -140,17 +146,16 @@ def eval_detections_character(detections, scores, file_names,ground_truth_path,c
     plt.savefig('precizie_medie_' + character + '.png')
     plt.show()
 
+    return average_precision
+
 def evaluate_results_task1(solution_path,ground_truth_path,verbose = 0):
 
 	#incarca detectiile + scorurile + numele de imagini	
 	detections = np.load(solution_path + "detections_all_faces.npy",allow_pickle=True,fix_imports=True,encoding='latin1')
-	print(detections.shape)
 
 	scores = np.load(solution_path + "scores_all_faces.npy",allow_pickle=True,fix_imports=True,encoding='latin1')
-	print(scores.shape)
 	
 	file_names = np.load(solution_path + "file_names_all_faces.npy",allow_pickle=True,fix_imports=True,encoding='latin1')
-	print(file_names.shape)
 
 	eval_detections(detections, scores, file_names, ground_truth_path)
 
@@ -158,18 +163,17 @@ def evaluate_results_task2(solution_path,ground_truth_path,character, verbose = 
 
 	#incarca detectiile + scorurile + numele de imagini	
 	detections = np.load(solution_path + "detections_" + character + ".npy",allow_pickle=True,fix_imports=True,encoding='latin1')
-	print(detections.shape)
 
 	scores = np.load(solution_path + "scores_"+ character + ".npy",allow_pickle=True,fix_imports=True,encoding='latin1')
-	print(scores.shape)
 	
 	file_names = np.load(solution_path + "file_names_"+ character + ".npy",allow_pickle=True,fix_imports=True,encoding='latin1')
-	print(file_names.shape)
 
-	eval_detections_character(detections, scores, file_names, ground_truth_path, character)
+	return eval_detections_character(detections, scores, file_names, ground_truth_path, character)
   
-verbose = 0
-class_name = "deedee"
+verbose = 1
+class_name = "all"
+dataset_type = "validation"
+
 my_path = f"../data/predictions/{class_name}_predictions.txt"
 boxes = []
 scores = []
@@ -198,7 +202,7 @@ np.save(output_path + "file_names_all_faces.npy", file_names)
 solution_path_root = output_path
 ground_truth_path_root = f"../data/solutions/ground_truth/"
 
-gt_path = f"../data/train/{class_name}_annotations.txt"
+gt_path = f"../data/{dataset_type}/{class_name}_annotations.txt"
 with open(gt_path, "r") as f:
     gt = f.readlines()
     gt = gt[:len(file_names)]
@@ -218,18 +222,31 @@ ground_truth_path = ground_truth_path_root + gt_file_name
 evaluate_results_task1(solution_path, ground_truth_path, verbose)
 
 
-# #task2
-# solution_path = solution_path_root + "task2/"
+#task2
+solution_path = "../data/solutions/task2/"
 
+ground_truth_path_root = "../data/solutions/ground_truth/task2/"
+ground_truth_path = ground_truth_path_root + "task2_dad_gt_validare.txt"
+dad_score = evaluate_results_task2(solution_path, ground_truth_path, "dad", verbose)
 
-# ground_truth_path = ground_truth_path_root + "task2_dad_gt_validare20.txt"
-# evaluate_results_task2(solution_path, ground_truth_path, "dad", verbose)
+ground_truth_path = ground_truth_path_root + "task2_mom_gt_validare.txt"
+mom_score = evaluate_results_task2(solution_path, ground_truth_path, "mom", verbose)
 
-# ground_truth_path = ground_truth_path_root + "task2_mom_gt_validare20.txt"
-# evaluate_results_task2(solution_path, ground_truth_path, "mom", verbose)
+ground_truth_path = ground_truth_path_root + "task2_dexter_gt_validare.txt"
+dexter_score = evaluate_results_task2(solution_path, ground_truth_path, "dexter", verbose)
 
-# ground_truth_path = ground_truth_path_root + "task2_dexter_gt_validare20.txt"
-# evaluate_results_task2(solution_path, ground_truth_path, "dexter", verbose)
+ground_truth_path = ground_truth_path_root + "task2_deedee_gt_validare.txt"
+deedee_score = evaluate_results_task2(solution_path, ground_truth_path, "deedee", verbose)
 
-# ground_truth_path = ground_truth_path_root + "task2_deedee_gt_validare20.txt"
-# evaluate_results_task2(solution_path, ground_truth_path, "deedee", verbose)
+print(f" TASK 2 ")
+print(f" Dad score: {dad_score}")
+print(f" Mom score: {mom_score}")
+print(f" Dexter score: {dexter_score}")
+print(f" Deedee score: {deedee_score}")
+print()
+task2_score = (dad_score + mom_score + dexter_score + deedee_score) / 4
+print(f" Task2 mean average precision: {task2_score}")
+task2_score = 4 * task2_score / 0.6
+task2_score = min(4, task2_score)
+task2_score = round(task2_score, 2)
+print(f" Task2 score: {task2_score}")
