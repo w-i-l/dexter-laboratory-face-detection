@@ -9,8 +9,8 @@ if __name__ == "__main__":
     detection_model_path = "../models/face_detector.h5"
     clusters_path = "../data/clusters/good_kmeans_clusters.csv"
     recognition_model_path = "../models/face_recognizer.h5"
-    images_path = "../data/validation/all"
-    output_path = "../data/Ocnaru"
+    images_path = "../data/test"
+    output_path = "../data/output"
     detection_params = DetectionParams(
         batch_size=1024,
         stride_factor=0.3,
