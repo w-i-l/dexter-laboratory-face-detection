@@ -38,7 +38,7 @@ class RecognitionPipeline:
         classes = ["dad", "mom", "dexter", "deedee", "unknown"]
         detections = { class_name: [] for class_name in classes }
 
-        for image_name in tqdm(self._predictions.keys(), desc="Processing images"):
+        for image_name in tqdm(self._predictions.keys(), desc="Recognizing faces"):
             image_path = os.path.join(self._images_path, image_name)
             image = cv2.imread(image_path)
             if image is None:
@@ -88,7 +88,7 @@ class RecognitionPipeline:
                     with open(detections_file_path, 'w+') as file:
                         pass
                 except:
-                    os.makedirs(output_path)
+                    os.makedirs(output_path, exist_ok=True)
                     with open(detections_file_path, 'w+') as file:
                         pass
 
