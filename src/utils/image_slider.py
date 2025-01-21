@@ -109,6 +109,7 @@ class ImageSlider:
         batch_size: int = 64,
         stride_factor: float = 0.3,
         face_threshold: float = 0.7,
+        verbose: bool = False
     ) -> list[tuple[tuple[int, int, int, int], float]]:
         """
         Slide over image using batched predictions for better performance
@@ -116,7 +117,7 @@ class ImageSlider:
         faces = []
         image_height, image_width, _ = image.shape
 
-        for cluster_size in tqdm(reversed(self._clusters), desc="Processing clusters"):
+        for cluster_size in tqdm(reversed(self._clusters), desc="Processing clusters", disable=not verbose):
             cluster_width, cluster_height = map(int, cluster_size)
             
             stride_x = max(1, int(cluster_width * stride_factor))
@@ -128,7 +129,8 @@ class ImageSlider:
 
             for y in tqdm(range(0, image_height - cluster_height, stride_y), 
                          desc=f"Scanning rows (cluster {cluster_width}x{cluster_height})", 
-                         leave=False):
+                         leave=False,
+                         disable=not verbose):
                 for x in range(0, image_width - cluster_width, stride_x):
                     # Extract window
                     window = image[y:y+cluster_height, x:x+cluster_width]
