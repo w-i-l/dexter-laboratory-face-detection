@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import pdb
-import os
 
 def intersection_over_union(bbox_a, bbox_b):
     x_a = max(bbox_a[0], bbox_b[0])
@@ -174,56 +172,13 @@ verbose = 1
 class_name = "all"
 dataset_type = "validation"
 
-my_path = f"../data/predictions/{class_name}_predictions.txt"
-boxes = []
-scores = []
-file_names = []
-
-with open(my_path, "r") as f:
-    for line in f:
-        image_name, x_min, y_min, x_max, y_max, confidence = line.strip().split()
-        boxes.append([int(x_min), int(y_min), int(x_max), int(y_max)])
-        scores.append(float(confidence))
-        file_names.append(image_name)
-
-boxes = np.array(boxes)
-scores = np.array(scores)
-file_names = np.array(file_names)
-
-output_path = f"../data/solutions/{class_name}/"
-if not os.path.exists(output_path):
-    os.makedirs(output_path)
-
-np.save(output_path + "detections_all_faces.npy", boxes)
-np.save(output_path + "scores_all_faces.npy", scores)
-np.save(output_path + "file_names_all_faces.npy", file_names)
-
-#change this on your machine
-solution_path_root = output_path
-ground_truth_path_root = f"../data/solutions/ground_truth/"
-
-gt_path = f"../data/{dataset_type}/{class_name}_annotations.txt"
-with open(gt_path, "r") as f:
-    gt = f.readlines()
-    gt = gt[:len(file_names)]
-
-print(f"Evaluating {len(file_names)} faces")
-
-gt_file_name = f"{class_name}_gt_validare.txt"
-with open(ground_truth_path_root + gt_file_name, "w") as f:
-    for line in gt:
-        image_name, x_min, y_min, x_max, y_max, _ = line.strip().split()
-        f.write(f"{image_name} {x_min} {y_min} {x_max} {y_max}\n")
-
-#task1
-solution_path = solution_path_root
-# ground_truth_path = ground_truth_path_root + "task1_gt_validare.txt"
-ground_truth_path = ground_truth_path_root + gt_file_name
+solution_path = "../data/Ocnaru/task1/"
+ground_truth_path = "../data/solutions/ground_truth/all_gt_validare.txt"
 evaluate_results_task1(solution_path, ground_truth_path, verbose)
 
 
 #task2
-solution_path = "../data/solutions/task2/"
+solution_path = "../data/Ocnaru/task2/"
 
 ground_truth_path_root = "../data/solutions/ground_truth/task2/"
 ground_truth_path = ground_truth_path_root + "task2_dad_gt_validare.txt"

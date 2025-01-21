@@ -1,4 +1,3 @@
-from faces_annotations import FacesAnnotations
 import os
 from models.detection_params import DetectionParams
 from tqdm import tqdm
