@@ -139,3 +139,8 @@ cython_debug/
 .vscode
 *.png
 *.jpg
+
+# keept the following files
+!models/face_detector.h5
+!models/face_recognizer.h5
+!data/clusters/good_kmeans_clusters.csv
