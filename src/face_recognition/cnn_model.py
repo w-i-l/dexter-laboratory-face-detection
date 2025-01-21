@@ -7,10 +7,14 @@ from face_recognition.data_generator import DataGenerator
 import os
 
 class CNNModel:
-    def __init__(self, input_shape: tuple[int, int, int]):
+    def __init__(self, input_shape: tuple[int, int, int], verbose: bool = True):
         self.input_shape = input_shape
         self.classes = ["dad", "mom", "dexter", "deedee", "unknown"]
-        print("input_shape", input_shape)
+        self.verbose = verbose
+
+        if verbose:
+            print("input_shape", input_shape)
+
         self.model = self.__create_model()
         
         optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=0.001)
@@ -19,11 +23,13 @@ class CNNModel:
             loss='categorical_crossentropy',  # Changed for multi-class classification
             metrics=['accuracy']
         )
-        self.model.summary()
+        if verbose:
+            self.model.summary()
 
     def __create_model(self) -> tf.keras.Model:
         inputs = tf.keras.layers.Input(shape=self.input_shape)
-        print("inputs", inputs)
+        if self.verbose:
+            print("inputs", inputs)
         
         x = tf.keras.layers.Rescaling(1./255)(inputs)
         
@@ -59,9 +65,13 @@ class CNNModel:
         return tf.keras.Model(inputs=inputs, outputs=outputs)
 
     def preprocess_data(self, data, labels):
-        print(len(data), len(data[0]))
+        if self.verbose:
+            print(len(data), len(data[0]))
+
         X = np.array(data, dtype=np.float32)
-        print(X.shape)
+        if self.verbose:
+            print(X.shape)
+
         y = tf.keras.utils.to_categorical(labels, num_classes=len(self.classes))
         return X, y
 

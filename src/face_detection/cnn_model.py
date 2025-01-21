@@ -6,9 +6,12 @@ from matplotlib import pyplot as plt
 from face_detection.data_generator import DataGenerator
 
 class CNNModel:
-    def __init__(self, input_shape: tuple[int, int, int]):
+    def __init__(self, input_shape: tuple[int, int, int], verbose=True):
         self.input_shape = input_shape
-        print("input_shape", input_shape)
+        self.verbose = verbose
+
+        if verbose:
+            print("input_shape", input_shape)
         self.model = self.__create_model()
         
         optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=0.001)
@@ -17,12 +20,14 @@ class CNNModel:
             loss='binary_crossentropy',
             metrics=['accuracy']
         )
-        self.model.summary()
+        if verbose:
+            self.model.summary()
 
 
     def __create_model(self) -> tf.keras.Model:
         inputs = tf.keras.layers.Input(shape=self.input_shape)
-        print("inputs", inputs)
+        if self.verbose:
+            print("inputs", inputs)
         
         x = tf.keras.layers.Rescaling(1./255)(inputs)
         
@@ -63,15 +68,18 @@ class CNNModel:
     
 
     def preprocess_data(self, data, labels):
-        print(len(data), len(data[0]))
+        if self.verbose:
+            print(len(data), len(data[0]))
         X = np.array(data, dtype=np.float32)
-        print(X.shape)
+        if self.verbose:
+            print(X.shape)
         y = np.array(labels, dtype=np.float32)
         return X, y
 
 
     def train(self, test_data, test_labels, train_data, train_labels, epochs: int = 10, batch_size: int = 32):
-        print("train_data", len(train_data), len(train_data[0]), len(train_data[0][0]), len(train_data[0][0][0]))
+        if self.verbose:
+            print("train_data", len(train_data), len(train_data[0]), len(train_data[0][0]), len(train_data[0][0][0]))
         X_train, y_train = self.preprocess_data(train_data, train_labels)
         X_test, y_test = self.preprocess_data(test_data, test_labels)
 
