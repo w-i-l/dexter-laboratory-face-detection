@@ -15,8 +15,10 @@ class MainPipeline:
         recognition_model_path: str,
     ):
         input_shape = (ImageProcessing.IMAGE_WIDTH, ImageProcessing.IMAGE_HEIGHT, 3)
+        print("Loading detection model...")
         self._detection_model = DetectionModel(input_shape, verbose=False)
         self._detection_model.load_model(detection_model_path)
+        print("Loading recognition model...")
         self._recognition_model = RecognitionModel(input_shape, verbose=False)
         self._recognition_model.load_model(recognition_model_path)
         self._image_slider = ImageSlider(clusters_path)
@@ -35,19 +37,3 @@ class MainPipeline:
         print(output_path)
 
         recognition_pipeline.write_detections(detections, output_path)
-
-
-
-if __name__ == "__main__":
-    # turn off tensorflow logging
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-    detection_model_path = "../models/face_detector.h5"
-    clusters_path = "../data/clusters/good_kmeans_clusters.csv"
-    recognition_model_path = "../models/face_recognizer.h5"
-    images_path = "../data/validation/all"
-    output_path = "../data/Ocnaru"
-    detection_params = DetectionParams()
-
-    pipeline = MainPipeline(detection_model_path, clusters_path, recognition_model_path)
-    pipeline.process(images_path, output_path, detection_params)
