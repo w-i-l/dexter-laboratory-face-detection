@@ -19,6 +19,7 @@ class FacesAnnotations:
         self._annotations = {}
         self._read_annotations()
 
+
     def _read_annotations(self):
         with open(self._annotation_path, 'r') as file:
             for line in file:
@@ -31,8 +32,11 @@ class FacesAnnotations:
                 else:
                     self._annotations[image_path].append(box)
 
+
     def get_annotations(self, image_path: str) -> list[tuple[tuple[int, int, int, int], str]]:
         return self._annotations[image_path] if image_path in self._annotations else []
+
+
 
 def process_images_in_batches(model: CNNModel, 
                             annotations: FacesAnnotations, 
@@ -133,36 +137,6 @@ if __name__ == "__main__":
     # Process each class
     output_base_dir = "../data/face_recognition"
 
-    # classes = ["dad", "mom", "dexter", "deedee"]
-    # for class_name in classes:
-    # # for class_name in ["dad"]:
-    #     print(f"\nProcessing class: {class_name}")
-        
-    #     # Load annotations
-    #     annotations = FacesAnnotations(
-    #         f"../data/train/{class_name}", 
-    #         f"../data/predictions/{class_name}_predictions.txt"
-    #     )
-        
-    #     # Process images
-    #     all_predictions, image_predictions = process_images_in_batches(
-    #         model, 
-    #         annotations, 
-    #         batch_size=1024
-    #     )
-        
-    #     # # Calculate accuracy
-    #     # correct = sum(1 for (pred_class, _), (_, true_class) 
-    #     #              in zip(all_predictions, sum(annotations._annotations.values(), [])) 
-    #     #              if pred_class == true_class)
-    #     # total = len(all_predictions)
-    #     # print(f"Accuracy for {class_name}: {correct/total*100:.2f}%")
-            
-    #     #    Save annotated images
-    #     output_dir = os.path.join(output_base_dir, class_name)
-    #     save_annotated_images(image_predictions, output_dir, colors)
-
-
     Class_name = "all"
     print(f"\nProcessing class: {Class_name}")
 
@@ -193,17 +167,6 @@ if __name__ == "__main__":
         annotations, 
         batch_size=1024
     )
-
-    # # Calculate accuracy
-    # correct = sum(1 for (pred_class, _), (_, true_class) 
-    #                 in zip(all_predictions, sum(annotations._annotations.values(), [])) 
-    #                 if pred_class == true_class)
-    # total = len(all_predictions)
-    # print(f"Accuracy for {Class_name}: {correct/total*100:.2f}%")
-
-    # # Save annotated images
-    # output_dir = os.path.join(output_base_dir, Class_name)
-    # save_annotated_images(image_predictions, output_dir, colors)
 
     output = { class_name: {
         "detections": [],
